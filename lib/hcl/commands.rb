@@ -106,12 +106,14 @@ module HCl
     end
 
     def start *args
+      date = Chronic.parse(get_date(args).join(' '))
       starting_time = get_starting_time args
       task = get_task args
       if task.nil?
         fail "Unknown task alias, try one of the following: ", aliases.join(', ')
       end
       timer = task.start http,
+        :spent_at => (date || Date.today).strftime('%F'),
         :starting_time => starting_time,
         :note => args.join(' ')
       "Started timer for #{timer} (at #{current_time})"

@@ -35,6 +35,14 @@ module HCl
       end
     end
 
+    def get_date args
+      ident_index = args.index {|a| a[0] == '@' }
+
+      if ident_index != 0
+        args.shift(ident_index)
+      end
+    end
+
     def current_time
       Time.now.strftime('%I:%M %p').downcase
     end
