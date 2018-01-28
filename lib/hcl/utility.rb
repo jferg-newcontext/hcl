@@ -1,3 +1,5 @@
+require 'chronic'
+
 module HCl
   class CommandError < StandardError; end
   module Utility
@@ -38,8 +40,8 @@ module HCl
     def get_date args
       ident_index = args.index {|a| a[0] == '@' }
 
-      if ident_index != 0
-        args.shift(ident_index)
+      unless ident_index.nil?
+        Chronic.parse(args.shift(ident_index).join(' '))
       end
     end
 
