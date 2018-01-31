@@ -106,14 +106,12 @@ module HCl
     end
 
     def start *args
-      date = get_date(args)
       starting_time = get_starting_time args
       task = get_task args
       if task.nil?
         fail "Unknown task alias, try one of the following: ", aliases.join(', ')
       end
       timer = task.start http,
-        :spent_at => date,
         :starting_time => starting_time,
         :note => args.join(' ')
       "Started timer for #{timer} (at #{current_time})"
