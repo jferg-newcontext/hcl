@@ -148,7 +148,7 @@ module HCl
           return entry.notes
         else
           entry.append_note http, args.join(' ')
-          "Added note to #{entry}."
+         Added note to #{entry}."
         end
       else
         fail "No running timers found."
@@ -156,14 +156,16 @@ module HCl
     end
 
     def show *args
-      date = args.empty? ? nil : Chronic.parse(args.join(' '))
+      date = args.empty? ? Time.now : Chronic.parse(args.join(' '))
       total_hours = 0.0
       result = ''
-      result << "\t#{date}\n"
+      result << "\t#{date.strftime('%A, %B %e, %Y')}\n"
+      result << ("\t" + '-' * 13) << "\n"
       DayEntry.daily(http, date).each do |day|
         running = day.running? ? '(running) ' : ''
         columns = HighLine::SystemExtensions.terminal_size[0] rescue 80
-        result << "\t#{day.formatted_hours}\t#{running}#{day.project}: #{day.notes.lines.to_a.last}\n"[0..columns-1]
+        # result << "\t#{day.formatted_hours}\t#{running}#{day.project}: #{day.notes.lines.to_a.last}\n"[0..columns-1]
+	result << "\t#{day.formatted_hours}\t#{running}#{day.client} - #{day.project} - #{day.task}#{day.notes.lines.to_a.last ? ': ' : ''}#{day.notes.lines.to_a.last}\n"[0..columns-1]
         total_hours = total_hours + day.hours.to_f
       end
       result << ("\t" + '-' * 13) << "\n"
