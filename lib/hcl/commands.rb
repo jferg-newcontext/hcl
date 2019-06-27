@@ -10,6 +10,7 @@ module HCl
       http.config_hash.merge(password:'***').map {|k,v| "#{k}: #{v}" }.join("\n")
     end
 
+    # TODO - Update to https://www.harveststatus.com/api
     # Show the network status of the Harvest service.
     def status
       result = Faraday.new("http://kccljmymlslr.statuspage.io/api/v2") do |f|
@@ -156,20 +157,43 @@ module HCl
     end
 
     def show *args
-      date = args.empty? ? Time.now : Chronic.parse(args.join(' '))
-      total_hours = 0.0
+      running_only = false 
       result = ''
-      result << "\t#{date.strftime('%A, %B %e, %Y')}\n"
-      result << ("\t" + '-' * 13) << "\n"
+
+      args[0] == 'running' ?  running_only = true : running_only = false
+
+      date = Time.now
+      total_hours = 0.0
+
+      if not running_only
+        date = args.empty? ? Time.now : Chronic.parse(args.join(' '))
+        result << "\t#{date.strftime('%A, %B %e, %Y')}\n"
+        result << ("\t" + '-' * 13) << "\n"
+      end
+
       DayEntry.daily(http, date).each do |day|
         running = day.running? ? '(running) ' : ''
         columns = HighLine::SystemExtensions.terminal_size[0] rescue 80
-        # result << "\t#{day.formatted_hours}\t#{running}#{day.project}: #{day.notes.lines.to_a.last}\n"[0..columns-1]
-	result << "\t#{day.formatted_hours}\t#{running}#{day.client} - #{day.project} - #{day.task}#{day.notes.lines.to_a.last ? ': ' : ''}#{day.notes.lines.to_a.last}\n"[0..columns-1]
-        total_hours = total_hours + day.hours.to_f
+	if day.running || !running_only
+	  result << "\t#{day.formatted_hours}\t#{running}#{day.client} - #{day.project} - #{day.task}#{day.notes.lines.to_a.last ? ': ' : ''}#{day.notes.lines.to_a.last}\n"[0..columns-1]
+          total_hours = total_hours + day.hours.to_f
+	end
       end
-      result << ("\t" + '-' * 13) << "\n"
-      result << "\t#{as_hours total_hours}\ttotal (as of #{current_time})\n"
+
+      if running_only && result.length == 0 
+        result = '(None)'
+      end
+
+      if !running_only
+        result << ("\t" + '-' * 13) << "\n"
+        result << "\t#{as_hours total_hours}\ttotal (as of #{current_time})\n"
+      end
+
+      return result
+    end
+
+    def running *args
+      show("running", args)
     end
 
     def resume *args
