@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-HCLPATH='/home/jferg/.rvm/gems/ruby-2.5.5/bin/hcl'
+HCLPATH=`which hcl`
 
 _dothis_completions()
 {

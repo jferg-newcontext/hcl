@@ -13,21 +13,20 @@ HCl is a command-line tool for interacting with Harvest time sheets using the
 
 ## GETTING STARTED
 
-You can install hcl directly from rubygems.org:
+Since this is a fork of the main project, you can't install from rubygems.org, but 
+you can clone:
 
-    gem install hcl
+		git clone https://github.com/jferg-newcontext/hcl
 
-or you can install from source:
+and build from source:
 
-    rake doc && rake install
+		bundle install
+		bundle exec rake build
+		gem install pkg/hcl-0.4.18.gem
 
 Once installed, you can view this README as a man page:
 
     gem man hcl
-
-I recommend aliasing your `man` command to additionally load gem man pages:
-
-    alias man="gem man -ls"
 
 ## SYNOPSIS
 
