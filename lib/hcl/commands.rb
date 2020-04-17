@@ -174,10 +174,10 @@ module HCl
       DayEntry.daily(http, date).each do |day|
         running = day.running? ? '(running) ' : ''
         columns = HighLine::SystemExtensions.terminal_size[0] rescue 80
-	if day.running || !running_only
-	  result << "\t#{day.formatted_hours}\t#{running}#{day.client} - #{day.project} - #{day.task}#{day.notes.lines.to_a.last ? ': ' : ''}#{day.notes.lines.to_a.last}\n"[0..columns-1]
-          total_hours = total_hours + day.hours.to_f
-	end
+        if day.running? || !running_only
+          result << "\t#{day.formatted_hours}\t#{running}#{day.client} - #{day.project} - #{day.task}#{day.notes.lines.to_a.last ? ': ' : ''}#{day.notes.lines.to_a.last}\n"[0..columns-1]
+                total_hours = total_hours + day.hours.to_f
+        end
       end
 
       if running_only && result.length == 0 
